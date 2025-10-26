@@ -1,0 +1,97 @@
+---
+apiVersion: devopszurich.crossplane.io/v1
+kind: Database
+metadata:
+  name: devops-zurich-database
+status:
+  conditions:
+  - lastTransitionTime: "2024-01-01T00:00:00Z"
+    message: 'Unready resources: database, postgres-credentials'
+    reason: Creating
+    status: "False"
+    type: Ready
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: database
+  generateName: devops-zurich-database-
+  labels:
+    crossplane.io/composite: devops-zurich-database
+    database-abstraction: devopsdb
+  name: devops-zurich-database
+  namespace: default
+  ownerReferences:
+  - apiVersion: devopszurich.crossplane.io/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Database
+    name: devops-zurich-database
+    uid: ""
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: database-service
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_DB
+              name: devopsdb
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: postgres-credentials
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: postgres-credentials
+        image: postgres:17
+        name: postgres
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-pvc
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+data:
+  password: cGFzc3dvcmQ=
+  username: ZGV2b3BzdXNlcg==
+kind: Secret
+metadata:
+  annotations:
+    crossplane.io/composition-resource-name: postgres-credentials
+  generateName: devops-zurich-database-
+  labels:
+    crossplane.io/composite: devops-zurich-database
+  name: devops-zurich-database
+  namespace: default
+  ownerReferences:
+  - apiVersion: devopszurich.crossplane.io/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Database
+    name: devops-zurich-database
+    uid: ""
+type: Opaque

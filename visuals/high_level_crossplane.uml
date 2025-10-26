@@ -1,0 +1,33 @@
+@startuml
+!theme vibrant
+
+title Crossplane Architecture Overview
+
+rectangle "User/Operator" as User
+
+package "Kubernetes Cluster" {
+
+    package "Crossplane Control Plane" {
+        component "Provider GCP" as ProviderGCP #RoyalBlue
+        component "Crossplane Engine" as CrossplaneEngine
+    }
+
+    database "Custom Resources" {
+        artifact "Crossplane Resources" as XR
+        artifact "Provider CRDs" as PCRD
+    }
+}
+
+rectangle "External/Internal APIs" {
+    cloud "GCP API" as GCPAPI
+    cloud "..." as OtherAPI
+}
+
+User --> XR : Creates
+
+CrossplaneEngine --> XR : Reconciles
+CrossplaneEngine --> PCRD : Reads
+ProviderGCP --> PCRD #RoyalBlue: Creates 
+ProviderGCP --> XR #RoyalBlue: Updates
+ProviderGCP --> GCPAPI #RoyalBlue: Interacts
+@enduml

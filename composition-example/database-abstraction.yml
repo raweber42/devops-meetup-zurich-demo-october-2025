@@ -1,0 +1,10 @@
+apiVersion: company.io/v1alpha1
+kind: Database
+metadata:
+  name: my-database
+  namespace: team
+spec:
+  sizeGb: 1
+  isHighlyAvailable: false
+  databaseName: my-database
+  userName: user

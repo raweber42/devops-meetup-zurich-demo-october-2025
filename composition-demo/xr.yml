@@ -1,0 +1,11 @@
+apiVersion: devopszurich.crossplane.io/v1
+kind: Database
+metadata:
+  name: devops-zurich-database
+  namespace: default
+spec:
+  sizeGb: 5
+  instanceSize: small
+  databaseName: devopsdb
+  databaseUser: devopsuser
+  # isHighlyAvailable: false

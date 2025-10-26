@@ -1,0 +1,23 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-gcp-storage
+spec:
+  package: xpkg.upbound.io/upbound/provider-gcp-storage:v1
+  runtimeConfigRef:
+    name: reduce-sync-interval
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: reduce-sync-interval
+spec:
+  deploymentTemplate:
+    spec:
+      selector: {}
+      template:
+        spec:
+          containers:
+            - name: package-runtime
+              args:
+                - --sync-interval=30s # default is 1h

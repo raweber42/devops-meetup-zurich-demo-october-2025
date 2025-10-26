@@ -1,0 +1,9 @@
+apiVersion: storage.gcp.upbound.io/v1beta2
+kind: Bucket
+metadata:
+  name: gdg-demo-bucket-with-really-unique-name-in-switzerland
+spec:
+  forProvider:
+    location: EUROPE-WEST6
+  providerConfigRef:
+    name: provider-config-gcp-storage

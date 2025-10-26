@@ -1,0 +1,10 @@
+# Installing a Function creates a function pod.
+# Crossplane sends requests to this pod to ask it what resources to create when you create a composite resource.
+# When Crossplane calls a Function it sends it the current state of the composite resource.
+# It also sends it the current state of any resources the composite resource owns.
+apiVersion: pkg.crossplane.io/v1
+kind: Function
+metadata:
+  name: function-patch-and-transform
+spec:
+  package: xpkg.crossplane.io/crossplane-contrib/function-patch-and-transform:v0.8.2

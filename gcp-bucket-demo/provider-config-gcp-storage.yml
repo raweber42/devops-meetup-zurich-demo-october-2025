@@ -1,0 +1,12 @@
+apiVersion: gcp.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: provider-config-gcp-storage
+spec:
+  credentials:
+    secretRef:
+      key: creds
+      name: gcp-secret
+      namespace: crossplane-system
+    source: Secret
+  projectID: gdg-demo-crossplane
