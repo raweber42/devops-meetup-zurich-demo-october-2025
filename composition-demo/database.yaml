@@ -1,5 +1,5 @@
-apiVersion: devopszurich.crossplane.io/v1
-kind: Database
+apiVersion: devopszurich.io/v1alpha1
+kind: xDatabase
 metadata:
   name: devops-zurich-database
   namespace: default
@@ -9,3 +9,6 @@ spec:
   databaseName: devopsdb
   databaseUser: devopsuser
   # isHighlyAvailable: false
+  # backupRetentionDays: 7
+  # enableSSL: true
+  # deletionProtection: false

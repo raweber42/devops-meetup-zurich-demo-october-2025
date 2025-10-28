@@ -1,0 +1,36 @@
+# TODO: Go on here -> k apply -f composition-demo/xrd.yml
+
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: databases.devopszurich.io # TODO: Check naming convention
+spec:
+  group: devopszurich.io
+  names:
+    kind: xDatabase
+    plural: databases
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              sizeGb:
+                type: integer
+              instanceSize:
+                type: string
+              databaseName:
+                type: string
+              databaseUser:
+                type: string
+              # [...] add more here as needed
+            required:
+              - sizeGb
+              - instanceSize
+              - databaseName # TODO: Show what happens if not set in demo
+              - databaseUser

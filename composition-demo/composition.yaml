@@ -1,11 +1,11 @@
 apiVersion: apiextensions.crossplane.io/v1
 kind: Composition
 metadata:
-  name: example-render
+  name: demo-composition
 spec:
   compositeTypeRef:
-    apiVersion: devopszurich.crossplane.io/v1
-    kind: Database
+    apiVersion: devopszurich.io/v1alpha1
+    kind: xDatabase
   mode: Pipeline
   pipeline:
   - step: patch-and-transform
@@ -38,19 +38,16 @@ spec:
                   - containerPort: 5432
                   env:
                   - name: POSTGRES_DB
-                    valueFrom:
-                      configMapKeyRef:
-                        name: ""  # to be patched
-                        key: POSTGRES_DB
+                    value: "devopsdb"  # hardcoded for now
                   - name: POSTGRES_USER
                     valueFrom:
                       secretKeyRef:
-                        name: postgres-credentials
+                        name: ""  # to be patched
                         key: username
                   - name: POSTGRES_PASSWORD
                     valueFrom:
                       secretKeyRef:
-                        name: postgres-credentials
+                        name: ""  # to be patched
                         key: password
                   volumeMounts:
                   - name: postgres-pvc
@@ -64,7 +61,7 @@ spec:
                 - ReadWriteOnce
                 resources:
                   requests:
-                    storage: 1Gi
+                    storage: 5Gi
           ################ END for Postgres Database ################
         patches:
         - type: FromCompositeFieldPath
@@ -78,7 +75,19 @@ spec:
           toFieldPath: metadata.labels["database-abstraction"]
         - type: FromCompositeFieldPath
           fromFieldPath: spec.databaseName
-          toFieldPath: spec.template.spec.containers[0].env[0].valueFrom.configMapKeyRef.name
+          toFieldPath: spec.template.spec.containers[0].env[0].value
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.name
+          toFieldPath: spec.template.spec.containers[0].env[1].valueFrom.secretKeyRef.name
+        - type: FromCompositeFieldPath
+          fromFieldPath: metadata.name
+          toFieldPath: spec.template.spec.containers[0].env[2].valueFrom.secretKeyRef.name
+        # readinessChecks:
+        # - matchCondition:
+        #     type: Ready
+        #     status: "True"
+        #   type: MatchCondition
+
       - name: postgres-credentials
         base:
           ################ START for Postgres Credentials ################
@@ -96,3 +105,8 @@ spec:
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.namespace
           toFieldPath: metadata.namespace
+        readinessChecks:
+        - type: None  # Secrets are considered ready immediately
+  # - step: automatically-detect-ready-composed-resources
+  #   functionRef:
+  #     name: function-auto-ready
