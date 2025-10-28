@@ -82,12 +82,9 @@ spec:
         - type: FromCompositeFieldPath
           fromFieldPath: metadata.name
           toFieldPath: spec.template.spec.containers[0].env[2].valueFrom.secretKeyRef.name
-        # readinessChecks:
-        # - matchCondition:
-        #     type: Ready
-        #     status: "True"
-        #   type: MatchCondition
-
+        readinessChecks:
+        - type: None # TODO: Implement proper readiness check
+          
       - name: postgres-credentials
         base:
           ################ START for Postgres Credentials ################

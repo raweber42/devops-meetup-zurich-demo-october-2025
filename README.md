@@ -44,6 +44,17 @@ Crossplane uses a composition-based approach where you define reusable infrastru
     ```
     This creates an actual database instance using the template you defined. This is what end users would create to get their infrastructure.
 
+6. **Verify Database is Running**
+    ```bash
+    # Check that the StatefulSet is ready
+    kubectl get statefulsets
+    
+    # Connect to the database to verify it's working
+    kubectl exec -it <pod-name> -- psql -U devopsuser -d devopsdb
+    ```
+    This confirms that the PostgreSQL database is running correctly and accessible.
+
+
 #### Additional Context:
 - Crossplane tracks all created resources using Kubernetes owner references, making it easy to see which resources belong together
 - The XRD acts like a custom Kubernetes API for your infrastructure
@@ -80,6 +91,10 @@ kubectl delete -f composition-demo/xrd.yaml
 ```bash
 # Delete the functions
 kubectl delete -f composition-demo/functions.yaml
+```
+```bash
+# Delete the rbac
+kubectl delete -f composition-demo/rbac.yaml
 ```
 
 **Note**: Deleting the composite resource instance first will trigger Crossplane to clean up all the managed cloud resources automatically due to owner references.
